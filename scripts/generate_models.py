@@ -1,48 +1,40 @@
 """Script to generate Pydantic models from ODCS JSON schema."""
 
-import json
 import subprocess
 from pathlib import Path
 
-# Get the project root directory
-PROJECT_ROOT = Path(__file__).parent.parent
-SCHEMA_PATH = PROJECT_ROOT / "schema" / "odcs-json-schema-latest.json"
-OUTPUT_PATH = PROJECT_ROOT / "cli_project" / "models" / "odcs.py"
-
 
 def main() -> None:
-    """Generate Pydantic models from ODCS JSON schema."""
-    # Read the schema file
-    with open(SCHEMA_PATH) as f:
-        schema = json.load(f)
+    """Generate Pydantic models from JSON schema."""
+    project_root = Path(__file__).parent.parent
+    schema_file = project_root / "schema" / "odcs-json-schema-latest.json"
+    output_file = project_root / "cli_project" / "models" / "odcs.py"
 
-    # Generate models using datamodel-code-generator
+    # Ensure output directory exists
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Generate models using datamodel-codegen
     cmd = [
         "poetry",
         "run",
         "datamodel-codegen",
         "--input",
-        str(SCHEMA_PATH),
+        str(schema_file),
         "--input-file-type",
-        "jsonschema",
+        "json",
         "--output",
-        str(OUTPUT_PATH),
+        str(output_file),
         "--target-python-version",
         "3.11",
-        "--use-standard-collections",
+        "--use-collections",
         "--use-schema-description",
         "--use-field-description",
-        "--use-default",
-        "--use-title-as-name",
-        "--use-annotated",
-        "--use-union-operator",
-        "--output-model-type",
-        "pydantic_v2.BaseModel",
+        "--use-typed-dict",
     ]
 
     try:
         subprocess.run(cmd, check=True)
-        print(f"Successfully generated models at {OUTPUT_PATH}")
+        print(f"Successfully generated models at {output_file}")
     except subprocess.CalledProcessError as e:
         print(f"Error generating models: {e}")
         raise

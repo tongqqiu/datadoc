@@ -37,8 +37,9 @@ datamodel-code-generator = "^0.25.0"  # For generating Pydantic models from JSON
 types-pyyaml = "^6.0.12.20250402"
 
 [tool.ruff]
-line-length = 88
+line-length = 120
 target-version = "py311"
+per-file-ignores = { "cli_project/models/odcs.py" = ["E501"] }
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
