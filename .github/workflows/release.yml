@@ -5,12 +5,18 @@ on:
     tags:
       - 'v*'  # Trigger on version tags
 
+# Add permissions block at the workflow level
+permissions:
+  contents: write  # Required for creating releases
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for generating release notes
 
       - name: Set up Python
         uses: actions/setup-python@v5
