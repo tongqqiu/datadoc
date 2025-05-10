@@ -11,7 +11,8 @@ dependencies = [
     "typer>=0.9.0,<0.10.0",
     "rich>=13.7.0,<14.0.0",  # Typer's recommended for rich output
     "pydantic>=2.6.0,<3.0.0",  # For data validation and settings management
-    "pyyaml>=6.0.1,<7.0.0"  # For YAML file parsing
+    "pyyaml>=6.0.1,<7.0.0",  # For YAML file parsing
+    "pyspark>=3.5.0,<4.0.0"  # For schema detection
 ]
 
 [project.scripts]

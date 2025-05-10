@@ -84,6 +84,23 @@ poetry run datadoc validate path/to/contract.yaml
     - `--output, -o`: Path to the output Python file (default: models/odcs.py)
     - `--python-version, -p`: Target Python version for generated code (default: 3.11)
 
+- `extract`: Extract schema from YAML files using Spark and convert to ODCS format
+  - Arguments:
+    - `file_pattern`: File pattern to process (e.g., 'data/*.yaml')
+  - Options:
+    - `--output, -o`: Output file path for the schema (default: schema.yaml)
+
+## Usage Examples
+
+Extract schema from YAML files:
+```bash
+# Extract schema from all YAML files in the data directory
+datadoc extract "data/*.yaml"
+
+# Extract schema and save to a specific output file
+datadoc extract "data/*.yaml" --output schemas/my_schema.yaml
+```
+
 ## Continuous Integration
 
 This project uses GitHub Actions for CI. On every push and pull request to `main`, the following checks are run:
