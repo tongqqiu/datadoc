@@ -1,6 +1,6 @@
 [project]
 name = "datadoc"
-version = "0.1.1"
+version = "0.1.2"
 description = "A modern command-line interface example"
 authors = [
     {name = "Tony Qiu", email = "tongqing.qiu@gmail.com"}
