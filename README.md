@@ -1,16 +1,11 @@
-# CLI Project
+# datadoc
 
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Poetry](https://img.shields.io/badge/poetry-1.7%2B-blue.svg)](https://python-poetry.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml)
 
-A modern command-line interface example built with Python and Typer. This project demonstrates best practices for creating a Python CLI application, including:
-
-- Modern Python features (type hints, f-strings)
-- Rich terminal output
-- Comprehensive testing
-- Development tools (linting, formatting)
-- Project structure and organization
+A modern command-line interface for validating and generating Open Data Contract Standard (ODCS) models, built with Python and Typer.
 
 ## Features
 
@@ -19,7 +14,8 @@ A modern command-line interface example built with Python and Typer. This projec
 - 🧪 Comprehensive test suite
 - 🔍 Linting and formatting with Ruff
 - 📝 Type checking with mypy
-- 🛠️ Development tools (pre-commit, make)
+- 🛠️ Development tools (pre-commit, Poetry)
+- ✅ Continuous Integration with GitHub Actions
 
 ## Installation
 
@@ -47,7 +43,7 @@ poetry run pre-commit install
 
 3. Run tests:
 ```bash
-make test
+poetry run pytest
 ```
 
 ## Usage
@@ -56,74 +52,67 @@ After activating the virtual environment, you can use the CLI in two ways:
 
 1. Using the entry point command:
 ```bash
-cli-project hello
-cli-project hello --name Alice
-cli-project greet --count 3 --name Bob
+datadoc validate path/to/contract.yaml
+
+datadoc generate-models path/to/schema.json
 ```
 
 2. Running the module directly:
 ```bash
-python -m cli_project.cli hello
-python -m cli_project.cli greet --count 3 --name Alice
+python -m datadoc.cli validate path/to/contract.yaml
+python -m datadoc.cli generate-models path/to/schema.json
 ```
 
 You can also run commands without activating the virtual environment using:
 ```bash
-poetry run cli-project hello
+poetry run datadoc validate path/to/contract.yaml
 ```
 
 ## Available Commands
 
-- `hello`: Greet someone by name
+- `validate`: Validate a YAML file against the ODCS schema
+  - Arguments:
+    - `file`: Path to the YAML file to validate
   - Options:
-    - `--name, -n`: Name to greet (default: "World")
+    - `--verbose, -v`: Show detailed validation errors
 
-- `greet`: Greet someone multiple times
+- `generate-models`: Generate Pydantic models from a JSON schema file
+  - Arguments:
+    - `schema_file`: Path to the JSON schema file
   - Options:
-    - `--count, -c`: Number of greetings (default: 1)
-    - `--name, -n`: Name to greet (default: "World")
+    - `--output, -o`: Path to the output Python file (default: models/odcs.py)
+    - `--python-version, -p`: Target Python version for generated code (default: 3.11)
 
-## Development
+## Continuous Integration
 
-### Available Make Commands
+This project uses GitHub Actions for CI. On every push and pull request to `main`, the following checks are run:
+- Linting with Ruff
+- Type checking with mypy
+- Tests with pytest and coverage
 
-```bash
-make help        # Show all available commands
-make install     # Install dependencies
-make format      # Format code
-make lint        # Run linter
-make lint-fix    # Run linter and fix issues
-make typecheck   # Run type checker
-make test        # Run tests
-make clean       # Clean up cache files
-```
-
-### Pre-commit Hooks
-
-The project uses pre-commit hooks to ensure code quality. Hooks include:
-- Code formatting (Ruff)
-- Linting (Ruff)
-- Type checking (mypy)
-- General git hooks (trailing whitespace, file endings, etc.)
+See `.github/workflows/ci.yml` for details.
 
 ## Project Structure
 
 ```
-cli_project/
-├── pyproject.toml          # Project configuration and dependencies
-├── poetry.lock            # Locked dependencies
-├── README.md              # Project documentation
-├── .pre-commit-config.yaml # Pre-commit hooks configuration
-├── Makefile               # Development commands
-├── cli_project/           # Main package
+datadoc/
+├── __init__.py
+├── cli.py                # CLI entry point
+├── models/
 │   ├── __init__.py
-│   ├── cli.py            # CLI entry point
-│   └── commands/         # Command modules
-│       ├── __init__.py
-│       └── greeting.py   # Greeting commands
-└── tests/                # Test package
+│   └── odcs.py           # Pydantic models (generated)
+├── commands/
+│   └── __init__.py
+├── ...
+.github/
+│   └── workflows/
+│       └── ci.yml        # GitHub Actions CI workflow
+mypy.ini                  # mypy configuration (ignores generated code)
+pyproject.toml            # Project configuration and dependencies
+README.md                 # Project documentation
+tests/
     ├── __init__.py
-    └── test_cli.py      # CLI tests
+    └── test_cli.py       # CLI tests
 ```
 
 ## Contributing
