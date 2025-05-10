@@ -112,9 +112,7 @@ class Tags(RootModel[list[str]]):
     A list of tags that may be assigned to the elements (object or property); the tags keyword may appear at any level. Tags may be used to better categorize an element. For example, `finance`, `sensitive`, `employee_record`.
     """
 
-    root: Annotated[
-        list[str], Field(examples=["finance", "sensitive", "employee_record"])
-    ]
+    root: Annotated[list[str], Field(examples=["finance", "sensitive", "employee_record"])]
     """
     A list of tags that may be assigned to the elements (object or property); the tags keyword may appear at any level. Tags may be used to better categorize an element. For example, `finance`, `sensitive`, `employee_record`.
     """
@@ -174,15 +172,11 @@ class DataQualityLibrary(BaseModel):
     """
     Must be less than or equal to the value to be valid. It is equivalent to '<='.
     """
-    mustBeBetween: Annotated[
-        list[float] | None, Field(None, max_length=2, min_length=2)
-    ]
+    mustBeBetween: Annotated[list[float] | None, Field(None, max_length=2, min_length=2)]
     """
     Must be between the two numbers to be valid. Smallest number first in the array.
     """
-    mustNotBeBetween: Annotated[
-        list[float] | None, Field(None, max_length=2, min_length=2)
-    ]
+    mustNotBeBetween: Annotated[list[float] | None, Field(None, max_length=2, min_length=2)]
     """
     Must not be between the two numbers to be valid. Smallest number first in the array.
     """
@@ -199,9 +193,7 @@ class DataQualitySql(BaseModel):
 
 
 class DataQualityCustom(BaseModel):
-    engine: Annotated[
-        str, Field(examples=["soda", "great-expectations", "monte-carlo", "dbt"])
-    ]
+    engine: Annotated[str, Field(examples=["soda", "great-expectations", "monte-carlo", "dbt"])]
     """
     Name of the engine which executes the data quality checks.
     """
@@ -261,9 +253,7 @@ class SupportItem(BaseModel):
     """
     Name of the tool, value can be `email`, `slack`, `teams`, `discord`, `ticket`, or `other`.
     """
-    scope: Annotated[
-        str | None, Field(None, examples=["interactive", "announcements", "issues"])
-    ]
+    scope: Annotated[str | None, Field(None, examples=["interactive", "announcements", "issues"])]
     """
     Scope can be: `interactive`, `announcements`, `issues`.
     """
@@ -289,9 +279,7 @@ class Pricing(BaseModel):
 
 
 class Team(BaseModel):
-    username: Annotated[
-        str | None, Field(None, examples=["mail@example.com", "uid12345678"])
-    ]
+    username: Annotated[str | None, Field(None, examples=["mail@example.com", "uid12345678"])]
     """
     The user's username or email.
     """
@@ -361,9 +349,7 @@ class ServiceLevelAgreementProperty(BaseModel):
     """
     Element(s) to check on. Multiple elements should be extremely rare and, if so, separated by commas.
     """
-    driver: Annotated[
-        str | None, Field(None, examples=["regulatory", "analytics", "operational"])
-    ]
+    driver: Annotated[str | None, Field(None, examples=["regulatory", "analytics", "operational"])]
     """
     Describes the importance of the SLA from the list of: `regulatory`, `analytics`, or `operational`.
     """
@@ -382,9 +368,7 @@ class CustomProperty(BaseModel):
 
 class DataQuality(BaseModel):
     authoritativeDefinitions: AuthoritativeDefinitions | None = None
-    businessImpact: Annotated[
-        str | None, Field(None, examples=["operational", "regulatory"])
-    ]
+    businessImpact: Annotated[str | None, Field(None, examples=["operational", "regulatory"])]
     """
     Consequences of the rule failure.
     """
@@ -418,7 +402,7 @@ class DataQuality(BaseModel):
     The severance of the quality rule.
     """
     tags: Tags | None = None
-    type: Type1 | None = "library"
+    type: Type1 | None = "library"  # type: ignore
     """
     The type of quality check. 'text' is human-readable text that describes the quality of the data. 'library' is a set of maintained predefined quality attributes such as row count or unique. 'sql' is an individual SQL query that returns a value that can be compared. 'custom' is quality attributes that are vendor-specific, such as Soda or Great Expectations.
     """
@@ -476,9 +460,7 @@ class SchemaElement(BaseModel):
     """
     Name of the element.
     """
-    physicalType: Annotated[
-        str | None, Field(None, examples=["table", "view", "topic", "file"])
-    ]
+    physicalType: Annotated[str | None, Field(None, examples=["table", "view", "topic", "file"])]
     """
     The physical element data type in the data source.
     """
@@ -504,9 +486,7 @@ class SchemaObject(SchemaElement):
     """
     Physical name.
     """
-    dataGranularityDescription: Annotated[
-        str | None, Field(None, examples=["Aggregation by country"])
-    ]
+    dataGranularityDescription: Annotated[str | None, Field(None, examples=["Aggregation by country"])]
     """
     Granular level of the data in the object.
     """
@@ -562,9 +542,7 @@ class SchemaBaseProperty(SchemaElement):
     """
     If element is used for partitioning, the position of the partition element. Starts from 1. Example of `country, year` being partition columns, `country` has partitionKeyPosition 1 and `year` partitionKeyPosition 2. Default to -1.
     """
-    classification: Annotated[
-        str | None, Field(None, examples=["confidential", "restricted", "public"])
-    ]
+    classification: Annotated[str | None, Field(None, examples=["confidential", "restricted", "public"])]
     """
     Can be anything, like confidential, restricted, and public to more advanced categorization. Some companies like PayPal, use data classification indicating the class of data in the element; expected values are 1, 2, 3, 4, or 5.
     """
@@ -636,9 +614,7 @@ class Server(BaseModel):
     """
     Description of the server.
     """
-    environment: Annotated[
-        str | None, Field(None, examples=["prod", "preprod", "dev", "uat"])
-    ]
+    environment: Annotated[str | None, Field(None, examples=["prod", "preprod", "dev", "uat"])]
     """
     Environment of the server.
     """
@@ -661,11 +637,11 @@ class OpenDataContractStandardODCS(BaseModel):
     """
     Current version of the data contract.
     """
-    kind: Kind | None = "DataContract"
+    kind: Kind | None = "DataContract"  # type: ignore
     """
     The kind of file this is. Valid value is `DataContract`.
     """
-    apiVersion: ApiVersion | None = "v3.0.2"
+    apiVersion: ApiVersion | None = "v3.0.2"  # type: ignore
     """
     Version of the standard used to build data contract. Default value is v3.0.2.
     """
@@ -682,9 +658,7 @@ class OpenDataContractStandardODCS(BaseModel):
     Indicates the property the data is primarily associated with. Value is case insensitive.
     """
     tags: Tags | None = None
-    status: Annotated[
-        str, Field(examples=["proposed", "draft", "active", "deprecated", "retired"])
-    ]
+    status: Annotated[str, Field(examples=["proposed", "draft", "active", "deprecated", "retired"])]
     """
     Current status of the dataset.
     """

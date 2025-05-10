@@ -8,49 +8,14 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 
-from cli_project.commands import greeting
-
 from .models.odcs import OpenDataContractStandardODCS
 
 app = typer.Typer(
-    name="cli-project",
+    name="datadoc",
     help="A modern command-line interface example",
     add_completion=False,
 )
 console = Console()
-
-
-@app.command()
-def hello(
-    name: str = typer.Option(
-        "World",
-        "--name",
-        "-n",
-        help="Name to greet",
-    ),
-) -> None:
-    """Greet someone by name."""
-    greeting.hello(name)
-
-
-@app.command()
-def greet(
-    count: int = typer.Option(
-        1,
-        "--count",
-        "-c",
-        help="Number of greetings",
-        min=1,
-    ),
-    name: str = typer.Option(
-        "World",
-        "--name",
-        "-n",
-        help="Name to greet",
-    ),
-) -> None:
-    """Greet someone multiple times."""
-    greeting.greet(count, name)
 
 
 @app.command()
@@ -123,6 +88,84 @@ def validate(
         if verbose:
             console.print("\n[bold]Detailed Error:[/bold]")
             console.print(Syntax(str(e), "python", theme="monokai"))
+        raise typer.Exit(1)
+
+
+@app.command()
+def generate_models(
+    schema_file: Path = typer.Argument(
+        ...,
+        help="Path to the JSON schema file",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+    ),
+    output_file: Path = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Path to the output Python file (default: models/odcs.py)",
+        file_okay=True,
+        dir_okay=False,
+        writable=True,
+    ),
+    python_version: str = typer.Option(
+        "3.11",
+        "--python-version",
+        "-p",
+        help="Target Python version for generated code",
+    ),
+) -> None:
+    """
+    Generate Pydantic models from a JSON schema file.
+
+    This command uses datamodel-codegen to generate Python Pydantic models
+    from a JSON schema file. The generated models can be used for validation
+    and type checking.
+    """
+    import subprocess
+
+    if output_file is None:
+        output_file = Path("models") / "odcs.py"
+
+    # Ensure output directory exists
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Generate models using datamodel-codegen
+    cmd = [
+        "datamodel-codegen",
+        "--input",
+        str(schema_file),
+        "--input-file-type",
+        "json",
+        "--output",
+        str(output_file),
+        "--target-python-version",
+        python_version,
+        "--use-collections",
+        "--use-schema-description",
+        "--use-field-description",
+        "--use-typed-dict",
+    ]
+
+    try:
+        subprocess.run(cmd, check=True)
+        console.print(
+            Panel(
+                f"[green]✓[/green] Successfully generated models at {output_file}",
+                title="Model Generation Successful",
+                border_style="green",
+            )
+        )
+    except subprocess.CalledProcessError as e:
+        console.print(
+            Panel(
+                f"[red]✗[/red] Error generating models:\n{str(e)}",
+                title="Model Generation Failed",
+                border_style="red",
+            )
+        )
         raise typer.Exit(1)
 
 

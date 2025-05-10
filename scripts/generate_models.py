@@ -8,7 +8,7 @@ def main() -> None:
     """Generate Pydantic models from JSON schema."""
     project_root = Path(__file__).parent.parent
     schema_file = project_root / "schema" / "odcs-json-schema-latest.json"
-    output_file = project_root / "cli_project" / "models" / "odcs.py"
+    output_file = project_root / "datadoc" / "models" / "odcs.py"
 
     # Ensure output directory exists
     output_file.parent.mkdir(parents=True, exist_ok=True)
