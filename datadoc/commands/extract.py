@@ -1,54 +1,48 @@
-"""Extract schema from data files using Spark."""
+"""Extract schema from YAML files using Spark."""
 
-import glob
 from pathlib import Path
+from typing import Any
 
 import typer
+import yaml
 from pyspark.sql import SparkSession
 from rich.console import Console
 from rich.table import Table
 
-from datadoc.models.odcs import (
-    LogicalType1,
-    SchemaBaseProperty,
-    SchemaObject,
-)
+from datadoc.models.odcs import LogicalType1
 
-app = typer.Typer()
 console = Console()
 
 
-def detect_schema(file_path: str) -> dict:
-    """Detect schema from a file using Spark."""
-    spark = SparkSession.builder.appName("SchemaDetection").getOrCreate()
+def read_config(config_path: str) -> dict[str, Any]:
+    """Read and parse the YAML configuration file."""
+    try:
+        with open(config_path) as f:
+            return yaml.safe_load(f)
+    except Exception as e:
+        raise typer.BadParameter(f"Error reading configuration file: {str(e)}")
 
-    # Read the file and infer schema
-    df = spark.read.format("yaml").load(file_path)
-    schema = df.schema
 
-    # Convert Spark schema to ODCS format
+def detect_schema(spark: SparkSession, data_path: str, format: str) -> dict:
+    """Detect schema from data file using Spark and return a dict in ODCS shape."""
+    df = spark.read.format(format).load(data_path)
+    spark_schema = df.schema
     properties = []
-    for field in schema.fields:
-        # Map Spark types to ODCS logical types
-        logical_type = map_spark_to_logical_type(field.dataType.typeName())
-
-        prop = SchemaBaseProperty(
-            name=field.name,
-            logicalType=logical_type,
-            physicalType=str(field.dataType),
-            required=not field.nullable,
-            description=f"Detected from {file_path}",
+    for field in spark_schema.fields:
+        properties.append(
+            {
+                "name": field.name,
+                "logicalType": str(map_spark_to_logical_type(field.dataType.typeName())),
+                "physicalType": str(field.dataType),
+                "required": not field.nullable,
+            }
         )
-        properties.append(prop)
-
-    return {
-        "name": Path(file_path).stem,
-        "properties": properties,
-    }
+    schema = {"name": "extracted_schema", "logicalType": "object", "properties": properties}
+    return schema
 
 
 def map_spark_to_logical_type(spark_type: str) -> LogicalType1:
-    """Map Spark data types to ODCS logical types."""
+    """Map Spark data type to ODCS logical type."""
     type_mapping = {
         "string": LogicalType1.string,
         "integer": LogicalType1.integer,
@@ -65,73 +59,37 @@ def map_spark_to_logical_type(spark_type: str) -> LogicalType1:
     return type_mapping.get(spark_type.lower(), LogicalType1.string)
 
 
-def convert_to_odcs_schema(schema_dict: dict) -> SchemaObject:
-    """Convert detected schema to ODCS SchemaObject."""
-    return SchemaObject(
-        name=schema_dict["name"],
-        logicalType=LogicalType1.object,
-        properties=schema_dict["properties"],
-    )
-
-
-@app.command()
 def extract(
-    file_pattern: str = typer.Argument(..., help="File pattern to process (e.g., 'data/*.yaml')"),
-    output: Path | None = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help="Output file path for the schema (default: schema.yaml)",
-    ),
+    config_path: str = typer.Argument(..., help="Path to the YAML configuration file"),
+    output: str | None = typer.Option(None, "--output", "-o", help="Path to save the extracted schema"),
 ) -> None:
-    """Extract schema from YAML files using Spark and convert to ODCS format."""
+    """Extract schema from data files using Spark."""
     spark = None
     try:
-        # Find all matching files
-        files = glob.glob(file_pattern)
-        if not files:
-            console.print(f"[red]No files found matching pattern: {file_pattern}[/red]")
-            raise typer.Exit(1)
-
-        # Initialize Spark session
-        spark = SparkSession.builder.appName("SchemaDetection").getOrCreate()
-
-        # Process each file
-        schemas = []
-        for file_path in files:
-            console.print(f"Processing [blue]{file_path}[/blue]...")
-            schema_dict = detect_schema(file_path)
-            schema = convert_to_odcs_schema(schema_dict)
-            schemas.append(schema)
-
-        # Create output schema
-        output_schema = {
-            "schema": schemas,
-        }
-
-        # Save to file
-        output_path = output or Path("schema.yaml")
-        with open(output_path, "w") as f:
-            import yaml
-
-            yaml.dump(output_schema, f, sort_keys=False)
-
-        console.print(f"\n[green]Schema extracted and saved to {output_path}[/green]")
-
-        # Display summary
-        table = Table(title="Extracted Schemas")
-        table.add_column("File", style="cyan")
-        table.add_column("Properties", style="magenta")
-
-        for schema in schemas:
-            table.add_row(schema.name, str(len(schema.properties)) if schema.properties else "0")
-
+        config = read_config(config_path)
+        data_path = config.get("data_path")
+        format = config.get("format", "csv")
+        if not data_path:
+            raise typer.BadParameter("data_path is required in configuration")
+        console.print(f"Processing data from {data_path}...")
+        spark = SparkSession.builder.appName("SchemaExtractor").getOrCreate()
+        schema = detect_schema(spark, data_path, format)
+        if output:
+            output_path = Path(output)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_path, "w") as f:
+                yaml.dump(schema, f, sort_keys=False)
+            console.print(f"Schema saved to {output_path}")
+        table = Table(title="Extracted Schema")
+        table.add_column("Name", style="cyan")
+        table.add_column("Type", style="magenta")
+        table.add_column("Required", style="green")
+        for prop in schema["properties"]:
+            table.add_row(prop["name"], prop["logicalType"], str(prop["required"]))
         console.print(table)
-
     except Exception as e:
-        console.print(f"[red]Error: {str(e)}[/red]")
+        console.print(f"[red]Error: {str(e)}")
         raise typer.Exit(1)
     finally:
-        # Stop Spark session
-        if spark is not None:
+        if spark:
             spark.stop()
