@@ -246,10 +246,7 @@ class SupportItem(BaseModel):
     """
     Description of the channel, free text.
     """
-    tool: Annotated[
-        str | None,
-        Field(None, examples=["email", "slack", "teams", "discord", "ticket", "other"]),
-    ]
+    tool: Annotated[str | None, Field(None, examples=["email", "slack", "teams", "discord", "ticket", "other"])]
     """
     Name of the tool, value can be `email`, `slack`, `teams`, `discord`, `ticket`, or `other`.
     """

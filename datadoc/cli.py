@@ -106,7 +106,7 @@ def generate_models(
         dir_okay=False,
         readable=True,
     ),
-    output_file: Path = typer.Option(
+    output_file: Path | None = typer.Option(
         None,
         "--output",
         "-o",
