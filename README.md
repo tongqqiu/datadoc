@@ -3,8 +3,8 @@
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![Poetry](https://img.shields.io/badge/poetry-1.7%2B-blue.svg)](https://python-poetry.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/<your-username>/<your-repo>?include_prereleases&sort=semver)](https://github.com/<your-username>/<your-repo>/releases)
+[![CI](https://github.com/tongqqiu/datadoc/actions/workflows/ci.yml/badge.svg)](https://github.com/tongqqiu/datadoc/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/tongqqiu/datadoc?include_prereleases&sort=semver)](https://github.com/tongqqiu/datadoc/releases)
 
 A modern command-line interface for validating and generating Open Data Contract Standard (ODCS) models, built with Python and Typer.
 
@@ -151,4 +151,4 @@ This project uses semantic versioning. To create a new release:
    - Upload the built package files
    - Generate release notes
 
-You can find all releases on the [GitHub Releases page](https://github.com/<your-username>/<your-repo>/releases).
+You can find all releases on the [GitHub Releases page](https://github.com/tongqqiu/datadoc/releases).
