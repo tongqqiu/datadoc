@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 
-from datadoc.commands.extract import app as extract_app
+from datadoc.commands.extract import extract
 
 from .models.odcs import OpenDataContractStandardODCS
 
@@ -20,7 +20,7 @@ app = typer.Typer(
 console = Console()
 
 # Add subcommands
-app.add_typer(extract_app, name="extract", help="Extract schema from data files")
+app.command()(extract)
 
 
 @app.command()

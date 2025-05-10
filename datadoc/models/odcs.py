@@ -501,7 +501,7 @@ class SchemaObject(SchemaElement):
     """
 
 
-class SchemaBaseProperty(SchemaElement):
+class SchemaBaseProperty(SchemaProperty, SchemaElement):
     primaryKey: bool | None = None
     """
     Boolean value specifying whether the element is primary or not. Default is false.
