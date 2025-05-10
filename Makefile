@@ -1,4 +1,4 @@
-.PHONY: install format lint lint-fix typecheck test clean help
+.PHONY: install format lint lint-fix typecheck test clean help generate-models
 
 # Variables
 PYTHON := poetry run python
@@ -6,11 +6,18 @@ RUFF := poetry run ruff
 MYPY := poetry run mypy
 
 help: ## Show this help message
-	@echo 'Usage:'
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "Available commands:"
+	@echo "  make install       - Install dependencies"
+	@echo "  make format        - Format code"
+	@echo "  make lint          - Run linter"
+	@echo "  make lint-fix      - Run linter and fix issues"
+	@echo "  make typecheck     - Run type checker"
+	@echo "  make test          - Run tests"
+	@echo "  make clean         - Clean up cache files"
+	@echo "  make generate-models - Generate Pydantic models from JSON schema"
 
 install: ## Install dependencies
-	poetry install --with dev
+	poetry install
 
 format: ## Format code using Ruff
 	$(RUFF) format .
@@ -45,3 +52,6 @@ watch: ## Watch files and run format/lint on changes
 	$(PYTHON) -m watchfiles "$(RUFF) format ." "$(RUFF) check ." .
 
 all: format lint typecheck ## Run all checks
+
+generate-models:
+	$(PYTHON) scripts/generate_models.py

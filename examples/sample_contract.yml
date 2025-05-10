@@ -1,0 +1,54 @@
+version: "1.0"
+kind: "DataContract"
+apiVersion: "v3.0.2"
+id: "sample-contract-123"
+name: "Sample Data Contract"
+status: "active"
+description:
+  usage: "Example data contract for demonstration"
+  purpose: "Show how to use the ODCS schema"
+  limitations: "This is just a sample"
+servers:
+  - server: "sample-api"
+    type: "api"
+    description: "Sample API server"
+    environment: "dev"
+    location: "https://api.example.com/v1"
+  - server: "sample-s3"
+    type: "s3"
+    description: "Sample S3 bucket"
+    environment: "prod"
+    location: "s3://my-bucket/data/"
+    format: "parquet"
+schema:
+  - name: "users"
+    physicalType: "table"
+    description: "User information table"
+    logicalType: "object"
+    physicalName: "users_table"
+    properties:
+      - name: "user_id"
+        logicalType: "string"
+        physicalType: "VARCHAR(36)"
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+      - name: "email"
+        logicalType: "string"
+        physicalType: "VARCHAR(255)"
+        required: true
+        unique: true
+      - name: "created_at"
+        logicalType: "date"
+        physicalType: "TIMESTAMP"
+        required: true
+support:
+  - channel: "email"
+    url: "mailto:support@example.com"
+    tool: "email"
+    scope: "issues"
+team:
+  - username: "john.doe@example.com"
+    name: "John Doe"
+    role: "Data Owner"
+    dateIn: "2024-01-01"
