@@ -1,7 +1,7 @@
 """Extract schema from YAML files using Spark."""
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional  # noqa: UP
 
 import typer
 import yaml
@@ -61,7 +61,7 @@ def map_spark_to_logical_type(spark_type: str) -> LogicalType1:
 
 def extract(
     config_path: str = typer.Argument(..., help="Path to the YAML configuration file"),
-    output: str | None = typer.Option(None, "--output", "-o", help="Path to save the extracted schema"),
+    output: Optional[str] = typer.Option(None, "--output", "-o", help="Path to save the extracted schema"),  # noqa: UP
 ) -> None:
     """Extract schema from data files using Spark."""
     spark = None

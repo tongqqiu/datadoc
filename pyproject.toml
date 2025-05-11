@@ -8,7 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
 dependencies = [
-    "typer>=0.9.0,<0.10.0",
+    "typer (>=0.9.0,<0.10.0)",
     "rich>=13.7.0,<14.0.0",  # Typer's recommended for rich output
     "pydantic>=2.6.0,<3.0.0",  # For data validation and settings management
     "pyyaml>=6.0.1,<7.0.0",  # For YAML file parsing
@@ -40,7 +40,7 @@ types-pyyaml = "^6.0.12.20250402"
 [tool.ruff]
 line-length = 120
 target-version = "py311"
-per-file-ignores = { "datadoc/models/odcs.py" = ["E501"] }
+per-file-ignores = { "datadoc/models/odcs.py" = ["E501"], "datadoc/cli.py" = ["UP"], "datadoc/commands/extract.py" = ["UP"] }
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]

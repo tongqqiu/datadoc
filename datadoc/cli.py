@@ -1,6 +1,7 @@
 """Main CLI entry point."""
 
 from pathlib import Path
+from typing import Optional
 
 import typer
 import yaml
@@ -106,7 +107,7 @@ def generate_models(
         dir_okay=False,
         readable=True,
     ),
-    output_file: Path | None = typer.Option(
+    output_file: Optional[Path] = typer.Option(
         None,
         "--output",
         "-o",
